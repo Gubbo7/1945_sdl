@@ -1,8 +1,6 @@
 # Prerequisites
 *.d
 
-build/*
-
 # Object files
 *.o
 *.ko
@@ -52,3 +50,4 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+build/*
