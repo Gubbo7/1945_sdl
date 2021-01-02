@@ -2,29 +2,22 @@
 //Altrimenti SDL cerca di caricare il main da SDL2Main.lib
 //NOTA: Si può passare anche come argomento di compilazione con -D
 #define SDL_MAIN_HANDLED
-#include "SDL.h"
-#include <SDL_mixer.h>
-#include <SDL_ttf.h>
-#include <SDL_image.h>
+#include "common.h"
+#include "renderer.h"
+#include "gameobj.h"
 
-
-enum boolean_enum { false, true };
-typedef unsigned char boolean;
-
-typedef struct {
-    float x;
-    float y;
-} vec2;
 
 int main() {
     SDL_Init(SDL_INIT_VIDEO);
 
+    size windowSize = NewSize(640, 480);
+
     SDL_Window* window = SDL_CreateWindow(
-        "First SDL2 Window",
+        "1945",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
-        640,
-        480,
+        windowSize.Width,
+        windowSize.Height,
         0
     );
 
@@ -38,6 +31,15 @@ int main() {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not create renderer: %s\n", SDL_GetError());
         return 2;
     }
+
+    GameObject go;
+    NewGameObj(&go, NewPoint(10,10),NewSize(50,50),"assets/ui/life.png");
+
+    
+
+    SDL_Texture* texture = NewTexture(renderer, "assets/player/bullet.png");
+
+    SDL_Rect* texture_rect;
 
     Uint64 curr_count = SDL_GetPerformanceCounter();
     Uint64 last_count = curr_count;
@@ -69,18 +71,14 @@ int main() {
             SDL_SetWindowTitle(window, title);
         }
 
-        // Clear
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-        SDL_RenderClear(renderer);
-        
+        RendererGameobject(renderer, &go);
+
         // Blit
         SDL_RenderPresent(renderer);
     }
 
     //Clean Up
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);  
-    SDL_Quit();
+    CloseWindow(renderer, window);
 
     return 0;
 }
