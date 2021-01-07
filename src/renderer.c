@@ -1,7 +1,9 @@
 #include "renderer.h"
 
-void RenderingTexture(SDL_Renderer* r, SDL_Texture* tex, SDL_Rect* rect){
-    SDL_RenderCopy(r, tex, NULL, rect);
+int RenderingTexture(SDL_Renderer* r, SDL_Texture* tex, point p, size s){
+    SDL_Rect rect;
+    NewRect(&rect, p, s);
+    return SDL_RenderCopy(r, tex, NULL, &rect);
 }
 
 SDL_Texture* NewTexture(SDL_Renderer* renderer, char* path_file){

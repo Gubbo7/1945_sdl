@@ -8,11 +8,10 @@ typedef struct{
     point position;
     size t_size;
     char* t_path;
-    SDL_Texture* texture;
-    SDL_Rect* rect;
 } GameObject;
 
 void NewGameObj(GameObject* go, point p, size t_size, char* t_path);
 void RendererGameobject(SDL_Renderer* r, GameObject* go);
+void RendererGameobjectWithAnimation(SDL_Renderer* r, GameObject* go, int numFrame);
 
 #endif //GAMEOBJ_H
