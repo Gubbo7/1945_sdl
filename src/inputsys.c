@@ -1,10 +1,9 @@
 #include "inputsys.h"
-
+#include "bullet.h"
+#include "player.h"
 
 
 void InitButton(Input* input, char* movement){
- 
-
     if(!strcmp(movement, "WASD")){
         input->up = SDL_SCANCODE_W;
         input->left = SDL_SCANCODE_A;
@@ -21,36 +20,39 @@ void InitButton(Input* input, char* movement){
     input->shoot = SDL_SCANCODE_SPACE;
 }
 
-void InitInputSystem(Input* input, char* buttons_char){
+Input* InitInputSystem(char* buttons_char){
+    Input* input = (Input*)calloc(1, sizeof(Input));
     input->isActive = true;
     InitButton(input, buttons_char);
+    return input;
 }
 
 
-void MoveInput(SDL_Renderer* renderer, SDL_Event* event, Input* inputSys, Character* c, size* size, double* deltatime, List* bullets){
+void MoveInput(SDL_Event* event, Input* inputSys, Player* player, double* deltatime, List* bullets){
     if(inputSys->isActive){
 
         if(event->type == SDL_KEYDOWN){
 
             if(event->key.keysym.scancode == inputSys->up){ //up
-                if(c->go.position.y > 0)
-                    c->go.position.y += -1 * c ->speed * (*deltatime);
+                if(player->character->go->position->y > 0)
+                    player->character->go->position->y += -1 * player->character ->speed * (*deltatime);
             }
             if(event->key.keysym.scancode == inputSys->left){ //left
-                if(c->go.position.x > 0)
-                    c->go.position.x += -1 * c ->speed * (*deltatime);
+                if(player->character->go->position->x > 0)
+                    player->character->go->position->x += -1 * player->character->speed * (*deltatime);
             }
             if(event->key.keysym.scancode == inputSys->down){ //down
-                if(c->go.position.y < (size->Height - 75) - c->go.t_size.Height)
-                    c->go.position.y += 1 * c ->speed * (*deltatime);
+                if(player->character->go->position->y < (HEIGHT_WINDOW - 75) - player->character->go->t_size->Height)
+                    player->character->go->position->y += 1 * player->character->speed * (*deltatime);
             }
             if(event->key.keysym.scancode == inputSys->right){ //right
-                if(c->go.position.x < (size->Width) - c->go.t_size.Width)
-                    c->go.position.x += 1 * c ->speed * (*deltatime);
+                if(player->character->go->position->x < (WIDTH_WINDOW) - player->character->go->t_size->Width)
+                    player->character->go->position->x += 1 * player->character->speed * (*deltatime);
             }
             if(event->key.keysym.scancode == inputSys->shoot){
-
-                Shoot(renderer, c, size, deltatime, bullets);
+                Shoot(player->character, deltatime, bullets);
+                //PlayerDied(player, deltatime, 3);
+                //player->isAlive = false;
             }
         }
 
@@ -58,17 +60,20 @@ void MoveInput(SDL_Renderer* renderer, SDL_Event* event, Input* inputSys, Charac
 }
 
 
-void Shoot(SDL_Renderer* renderer, Character* c, size* size, double* deltaTime, List* bullletList){
-    if(c->go.position.y > 0){
+void Shoot(Character* c, double* deltaTime, List* bullletList){
+    
+    if(c->go->position->y > 0){
         int count = 0;
         int index = 0;
         Node* each = bullletList->__head;
+        Bullet* tempBullet;
         while(each){
             Node* next = each->next;
-            if (!((Bullet*)each->data)->isActive){
-                ((Bullet*)each->data)->isActive = true;
-                ((Bullet*)each->data)->go.position.x = c->go.position.x +(c->go.t_size.Width * 0.5f) - 10;
-                ((Bullet*)each->data)->go.position.y = c->go.position.y;
+            if (!((Bullet*)each->data)->go->isActive){
+                tempBullet = ((Bullet*)each->data);
+                tempBullet->go->isActive = true;
+                tempBullet->go->position->x = c->go->position->x + (c->go->t_size->Width * 0.5f) - (tempBullet->go->t_size->Width * 0.5f);
+                tempBullet->go->position->y = c->go->position->y + tempBullet->go->t_size->Height;
                 index = count;
                 break;
             }
@@ -76,4 +81,8 @@ void Shoot(SDL_Renderer* renderer, Character* c, size* size, double* deltaTime, 
             each = next;
         }
     }
+}
+
+void DestroyInput(Input* input){
+    free(input);
 }

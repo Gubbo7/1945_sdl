@@ -1,13 +1,22 @@
 #include "character.h"
 
-void NewCharacter(Character* c, point p, size s, int hp, float speed, char* path){
-
+Character* NewCharacter(point* p, size* s, int hp, float speed, char* path){
+    Character* c = (Character*)calloc(1, sizeof(Character));
     c->hp = hp;
     c->speed = speed;
-    c->path = path;
-    NewGameObj(&c->go, p, s, path);
+    c->go = NewGameObj(p, s, path);
+    return c;
 }
 
-void RenderingCharacter(SDL_Renderer* renderer, Character* c){
-    RendererGameobject(renderer, &c->go);
+void RenderCharacter(SDL_Renderer* renderer, Character* c){
+    RenderGameobject(renderer, c->go);
+}
+
+// void DeathAnimChar(SDL_Renderer* renderer, char* path){
+//     NewSpriteSheet(renderer, path);
+// }
+
+void DestroyCharacter(Character* c){
+    DestroyGameObj(c->go);
+    free(c);
 }

@@ -3,8 +3,7 @@
 
 #include "common.h"
 #include "list.h"
-#include "character.h"
-#include "playerbullet.h"
+#include "player.h"
 
 typedef struct{
     boolean isActive;
@@ -19,9 +18,10 @@ typedef struct{
 
 
 void InitButton(Input* input, char* movement);
-void InitInputSystem(Input* input, char* buttons);
-void MoveInput(SDL_Renderer* renderer, SDL_Event* event, Input* inputSys, Character* c, size* size, double* deltaTime, List* bullets);
-void Shoot(SDL_Renderer* renderer, Character* c, size* size, double* deltaTime, List* bullletList);
+Input* InitInputSystem(char* buttons);
+void MoveInput(SDL_Event* event, Input* inputSys, Player* player, double* deltaTime, List* bullets);
+void Shoot(Character* c, double* deltaTime, List* bullletList);
 
+void DestroyInput(Input* input);
 
 #endif //INPUTSYS_H
