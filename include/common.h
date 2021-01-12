@@ -32,9 +32,11 @@ typedef struct {
 
 size* NewSize(float width, float height);
 point* NewPoint(float x, float y);
+
+int GetRandomInRange(int lower, int upper);
 point* RandomPoint(size* s);
+
 void SizeDestroy(size* s);
 void PointDestroy(point* p);
-int GetRandomInRange(int lower, int upper);
 
 #endif //COMMON_H

@@ -3,7 +3,7 @@
 
 #include "common.h"
 #include "list.h"
-#include "player.h"
+#include "character.h"
 
 typedef struct{
     boolean isActive;
@@ -12,15 +12,17 @@ typedef struct{
     SDL_Scancode left;
     SDL_Scancode right;
     SDL_Scancode shoot;
+    Mix_Chunk* explosion;
 
 } Input;
 
 
 
-void InitButton(Input* input, char* movement);
 Input* InitInputSystem(char* buttons);
-void MoveInput(SDL_Event* event, Input* inputSys, Player* player, double* deltaTime, List* bullets);
-void Shoot(Character* c, double* deltaTime, List* bullletList);
+void InitButton(Input* input, char* movement);
+void MoveInput(SDL_Event* event, Input* inputSys, Character* c, double deltaTime);
+void Shoot(Character* c);
+boolean UpdateInput(SDL_Event*, Input* input, Character* c, double deltaTime);
 
 void DestroyInput(Input* input);
 

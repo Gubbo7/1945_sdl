@@ -7,12 +7,22 @@ GameObject* NewGameObj(point* p, size* size, char* t_path){
     go->t_path = t_path;
     go->t_size = size;
     go->isActive = true;
+    go->myRect = NewRect(go->position, go->t_size);
     return go;
 }
 
 void RenderGameobject(SDL_Renderer* r, GameObject* go){
     SDL_Texture* texture = NewTexture(r, go->t_path);
-    RenderingTexture(r, texture, go->position, go->t_size);
+    if (texture == NULL)
+    {
+        printf("texture '%s' is null", go->t_path);
+    }
+    else{
+        if (go->isActive)
+        {
+            RenderingTexture(r, texture, go->position, go->t_size);
+        }
+    }
     SDL_DestroyTexture(texture);
 }
 
@@ -33,15 +43,14 @@ void AddGoToList(List* list, int n, char* elem, int type){
     else if (!strcmp("background", elem)){
         for (int i = 0; i < n; i++)
         {
-            AddToList(list, NewGameObj(NewPoint(0, 540 - HEIGHT_WINDOW * i), NewSize(WIDTH_WINDOW, HEIGHT_WINDOW), "assets/map/water2.png"));
+            AddToList(list, NewGameObj(NewPoint(0, 540 - HEIGHT_WINDOW * i), NewSize(WIDTH_WINDOW, HEIGHT_WINDOW), "./assets/map/water2.png"));
         }
     }
 }
 
 
 
-GameObject* NewIsland(IslandsType it)
-{
+GameObject* NewIsland(IslandsType it){
     GameObject* go;
     if(it == Normal)
     {
@@ -79,6 +88,8 @@ void RenderGOList(SDL_Renderer* renderer, List* goList, boolean bg, float deltaT
         count++;
         each = next;
     }
+    each = NULL;
+    free_GO = NULL;
 }
 
 void RenderGOActive(SDL_Renderer* renderer, GameObject* go, boolean bg)
@@ -86,7 +97,7 @@ void RenderGOActive(SDL_Renderer* renderer, GameObject* go, boolean bg)
     if(!bg && go->position->y > (HEIGHT_WINDOW - 75) + go->t_size->Height){ //380 ref win height - UI
         go->position = RandomPoint(go->t_size);
     }
-    else if(bg && go->position->y > -10){
+    else if(bg && go->position->y > -10 && go->isActive){
         go->position->y = HEIGHT_WINDOW - go->t_size->Height - 75;
     }
     else{
@@ -95,6 +106,9 @@ void RenderGOActive(SDL_Renderer* renderer, GameObject* go, boolean bg)
 }
 
 void DestroyGameObj(GameObject* go){
-    if(go)
+    if (go){
+        PointDestroy(go->position);
+        SizeDestroy(go->t_size);
         free(go);
+    }
 }

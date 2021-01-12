@@ -43,7 +43,19 @@ foreach (_variableName ${_variableNames})
 endforeach()
 ]] 
 
-add_executable(Prj1945 src/main.c src/common.c src/gameobj.c src/renderer.c src/inputsys.c src/character.c src/bullet.c src/list.c src/map.c src/player.c src/enemy.c)
+add_executable(Prj1945 src/main.c 
+src/common.c 
+src/gameobj.c 
+src/renderer.c 
+src/inputsys.c 
+src/character.c 
+src/bullet.c 
+src/list.c 
+src/player.c 
+src/enemy.c 
+src/ui.c
+src/physics.c
+src/ttf.c)
 # link diretto sulla .lib
 target_link_libraries(Prj1945 
   ${SDL2_LIBRARY}

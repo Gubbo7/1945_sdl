@@ -6,14 +6,14 @@ Bullet* NewBullet(BulletType bulletType){
 
     if(bulletType == playerBullet){
         bullet->dmg = 30;
-        bullet->speed = 100;
+        bullet->speed = 10;
         bullet->go = NewGameObj(NewPoint(20, 20), NewSize(15, 15), "./assets/player/bullet.png");
         bullet->go->isActive = false;
     }
     else if(bulletType == enemyBullet){
         bullet->dmg = 30;
-        bullet->speed = 100;
-        bullet->go = NewGameObj(NewPoint(20, 20), NewSize(15, 15), "./assets/enemy/enemybullet1.png");
+        bullet->speed = 10;
+        bullet->go = NewGameObj(NewPoint(20, 20), NewSize(15, 15), "./assets/enemy/enemyBullet.png");
         bullet->go->isActive = false;
     }
     return bullet;
@@ -23,12 +23,17 @@ void RenderingBullet(SDL_Renderer* renderer, Bullet* b){
     if(b->go->position->y < 0 - b->go->t_size->Height){
         b->go->isActive = false;
     }
+    if (b->speed < 0 && b->go->position->y > (HEIGHT_WINDOW - 75))
+    {
+        b->go->isActive = false;
+    }
     else{
-        RenderGameobject(renderer, b->go);
+        // printf("rendering bullet\n");
+        RenderGameobject(renderer, b->go);        
     }
 }
 
-void RenderingBullets(SDL_Renderer* renderer, List* bulletList, float deltaTime){
+void UpdateBullets(SDL_Renderer* renderer, List* bulletList, float deltaTime){
     int count = 0;
     Node* each = bulletList->__head;
     Bullet* freeBullet;
@@ -43,7 +48,8 @@ void RenderingBullets(SDL_Renderer* renderer, List* bulletList, float deltaTime)
         count++;
         each = next;
     }
-    
+    each = NULL;
+    freeBullet = NULL;
 }
 
 void DestroyBullet(Bullet* b){

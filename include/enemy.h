@@ -3,16 +3,38 @@
 
 #include "character.h"
 
-typedef struct{
+typedef struct
+{
     Character* character;
+    int score;
+    float timeShoot;
+    boolean isAlive;
+    boolean isDead;
+    Mix_Chunk* shoot;
+    Mix_Chunk* explosion;
 } Enemy;
 
-enum enemyType {enemyGreen, enemyOrange, enemyWhite, enemyBlue};
-typedef enum enemyType EnemyType;
+typedef struct
+{
+    List* enemys;
+} EnemyManager;
 
-Enemy* NewEnemy(point* p, size* s, int hp, float speed, char* path);
-void RenderEnemy(SDL_Renderer* renderer, Enemy* enemy);
-void EnemyDie(Enemy* enemy);
-void DestroyEnemy(Enemy* enemy);
+
+// ENEMY MANAGER
+EnemyManager* NewEnemyManager();
+void AddEnemyManagerList(EnemyManager*, size*, char*, int);
+void UpdateEnemyManager(SDL_Renderer*, EnemyManager*, double);
+void DestroyEnemyManager(EnemyManager*);
+
+// ENEMY
+Enemy* NewEnemy(size*, char*, int);
+void UpdateEnemy(SDL_Renderer*, Enemy*, double);
+void RespawnEnemy(Enemy*);
+void ShootEnemy(Enemy*, double);
+void ShootEnemyBullets(Enemy* e);
+void AI(Enemy*, double);
+void DestroyEnemy(Enemy*);
+
+
 
 #endif

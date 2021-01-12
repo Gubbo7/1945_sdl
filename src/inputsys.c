@@ -1,6 +1,6 @@
 #include "inputsys.h"
 #include "bullet.h"
-#include "player.h"
+#include "character.h"
 
 
 void InitButton(Input* input, char* movement){
@@ -23,36 +23,55 @@ void InitButton(Input* input, char* movement){
 Input* InitInputSystem(char* buttons_char){
     Input* input = (Input*)calloc(1, sizeof(Input));
     input->isActive = true;
+    input->explosion = Mix_LoadWAV("./assets/audio/snd_explosion1.wav");
+    Mix_VolumeChunk(input->explosion, SDL_MIX_MAXVOLUME / 8);
     InitButton(input, buttons_char);
     return input;
 }
 
+boolean UpdateInputSystem(SDL_Event* event, Input* input, Character* c, double deltaTime){
+    while (SDL_PollEvent(event)){
+        if (event->type == SDL_QUIT) {
+                free(event);
+                return true;
+            }
+        MoveInput(event, input, c, deltaTime);
+    }
+    return false;
+}
 
-void MoveInput(SDL_Event* event, Input* inputSys, Player* player, double* deltatime, List* bullets){
+void MoveInput(SDL_Event* event, Input* inputSys, Character* character, double deltaTime){
     if(inputSys->isActive){
 
         if(event->type == SDL_KEYDOWN){
 
             if(event->key.keysym.scancode == inputSys->up){ //up
-                if(player->character->go->position->y > 0)
-                    player->character->go->position->y += -1 * player->character ->speed * (*deltatime);
+                if(character->go->position->y > 0)
+                    character->go->position->y += -1 * character ->speed * (deltaTime);
+                else
+                    character->go->position->y = 0;
             }
             if(event->key.keysym.scancode == inputSys->left){ //left
-                if(player->character->go->position->x > 0)
-                    player->character->go->position->x += -1 * player->character->speed * (*deltatime);
+                if(character->go->position->x > 0)
+                    character->go->position->x += -1 * character->speed * (deltaTime);
+                else
+                    character->go->position->x = 0;
             }
             if(event->key.keysym.scancode == inputSys->down){ //down
-                if(player->character->go->position->y < (HEIGHT_WINDOW - 75) - player->character->go->t_size->Height)
-                    player->character->go->position->y += 1 * player->character->speed * (*deltatime);
+                if(character->go->position->y < (HEIGHT_WINDOW - 75) - character->go->t_size->Height)
+                    character->go->position->y += 1 * character->speed * (deltaTime);
+                else
+                    character->go->position->y = (HEIGHT_WINDOW - 75) - character->go->t_size->Height;
             }
             if(event->key.keysym.scancode == inputSys->right){ //right
-                if(player->character->go->position->x < (WIDTH_WINDOW) - player->character->go->t_size->Width)
-                    player->character->go->position->x += 1 * player->character->speed * (*deltatime);
+                if(character->go->position->x < (WIDTH_WINDOW) - character->go->t_size->Width)
+                    character->go->position->x += 1 * character->speed * (deltaTime);
+                else
+                    character->go->position->x = (WIDTH_WINDOW) - character->go->t_size->Width;
             }
             if(event->key.keysym.scancode == inputSys->shoot){
-                Shoot(player->character, deltatime, bullets);
-                //PlayerDied(player, deltatime, 3);
-                //player->isAlive = false;
+                Shoot(character);
+                Mix_PlayChannel(-1, inputSys->explosion, 0);
             }
         }
 
@@ -60,12 +79,12 @@ void MoveInput(SDL_Event* event, Input* inputSys, Player* player, double* deltat
 }
 
 
-void Shoot(Character* c, double* deltaTime, List* bullletList){
+void Shoot(Character* c){
     
     if(c->go->position->y > 0){
         int count = 0;
         int index = 0;
-        Node* each = bullletList->__head;
+        Node* each = c->bullets->__head;
         Bullet* tempBullet;
         while(each){
             Node* next = each->next;
@@ -80,6 +99,8 @@ void Shoot(Character* c, double* deltaTime, List* bullletList){
             count++;
             each = next;
         }
+        each = NULL;
+        tempBullet = NULL;
     }
 }
 
